@@ -1,0 +1,7 @@
+{
+"fb" : {
+	"clientID": "216135301877937",
+    "clientSecret": "e5cc1adcf79ec5cb2eb7712cc5675a46",
+    "callbackURL": "http://localhost:3000/authfb/callback"
+ }
+}
