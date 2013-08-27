@@ -1,4 +1,14 @@
-html
-	a(href="/authfb") login with fb
-	br
-	a(href="/authtw") login with tw
+extends layout
+
+block content
+    body.home-page
+        .header-wrapper
+            .header
+        .homepage-container
+            .login-container
+                h1.login-head Sign In
+                p.login-paraa Meet local singles on the world's first online
+                p.login-parab speed dating site.
+                a.sb-facebook(href="/authfb")
+                p.fb-tw-or or
+                a.sb-twitter(href="/authtw")

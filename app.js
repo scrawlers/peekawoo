@@ -74,7 +74,7 @@ app.get('/authfb/callback',
 			res.redirect('/option');
 });
 app.get('/option',function(req,res){
-	res.render('option');
+	res.render('option',{profile:req.session.passport.user.gender});
 });
 app.post('/loading',function(req,res){
 	req.user.gender = req.body.gender;
