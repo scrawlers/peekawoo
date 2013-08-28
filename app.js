@@ -71,6 +71,10 @@ passport.use(new TwitterStrategy(config.tw,
   }
 ));
 
+app.get("/",function(req,res){
+	res.render('login');
+});
+
 app.get("/login",function(req,res){
 	res.render('login');
 });
@@ -113,7 +117,14 @@ app.get('/chat/:room',function(req,res){
 		else{
 			data = JSON.parse(data[0]);
 		}
-		res.render('chat',{user: req.user,room : data});
+		var up = {};
+		up.id = req.user.id;
+		up.username = req.user.username;
+		up.gender = req.user.gender;
+		up.profileUrl = req.user.profileUrl;
+		up.provider = req.user.provider;
+		up.codename = req.user.codename;
+		res.render('chat',{user: up,room : data});
 	});
 	
 });
@@ -170,9 +181,9 @@ app.io.sockets.on('connection',function(socket){
 
 	app.io.route('my msg',function(req){
 		
-		user.msg = req.data.msg;
+	//	user.msg = req.data.msg;
 		console.log(JSON.stringify(user));
-		req.io.room(getRoom(req)).broadcast('new msg', user);
+		app.io.room(getRoom(req)).broadcast('new msg', req.data);
 	});
 
 	app.io.route('member', function(req) {
@@ -189,6 +200,9 @@ app.io.sockets.on('connection',function(socket){
 				up.provider = user.provider;
 				client.srem("visitor:"+user.gender,JSON.stringify(up));
 				client.sadd("visitor:"+user.gender,JSON.stringify(up));
+				console.log("+++++++cheking+++++++");
+				console.log(up);
+				console.log("+++++++cheking+++++++");
 				callback(null,true);
 			},
 			getMaleVisitor : function(callback){
