@@ -59,7 +59,9 @@ passport.deserializeUser(function(obj, done) {
 	
 passport.use(new FacebookStrategy(config.fb,
   function(accessToken, refreshToken, profile, done) {
-	profile.photourl = profile.profile_image_url;
+	profile.photourl = 'http://graph.facebook.com/'+profile.username+'/picture';
+	console.log("+++facebook profileurl+++");
+	console.log(profile.photourl);
     return done(null, profile);
   }
 ));
@@ -121,7 +123,7 @@ app.get('/chat/:room',function(req,res){
 		up.id = req.user.id;
 		up.username = req.user.username;
 		up.gender = req.user.gender;
-		up.profileUrl = req.user.profileUrl;
+		up.photourl = req.user.photourl;
 		up.provider = req.user.provider;
 		up.codename = req.user.codename;
 		res.render('chat',{user: up,room : data});
@@ -182,7 +184,9 @@ app.io.sockets.on('connection',function(socket){
 	app.io.route('my msg',function(req){
 		
 	//	user.msg = req.data.msg;
-		console.log(JSON.stringify(user));
+	//	console.log(JSON.stringify(user));
+		console.log("----my msg req.data content----");
+		console.log(req.data);
 		app.io.room(getRoom(req)).broadcast('new msg', req.data);
 	});
 

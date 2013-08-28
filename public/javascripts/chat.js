@@ -6,7 +6,6 @@ $(function(){
 	var user = $("#user").val();
 	user = JSON.parse(user);
 	socket.on(user.id,function(data){
-		console.log(data);
 		if(data){
 			window.location = '/chat/'+data.name;
 		}
@@ -17,12 +16,15 @@ $(function(){
 	});
 	
 	socket.on('new msg',function(data){
-		alert(JSON.stringify(data));
+		console.log("++++++++data++++++");
+		console.log(data);
+		console.log("++++++++profileUrl++++++");
+		console.log(data.profileUrl);
 		if(data.gender == "male"){
-			$(" .messagewindow").append("<img class='leftp'></img><img class='imgleft' src='"+data.profileUrl+"'></img><p class='me-chat'><strong>"+data.codename+":</strong> <em>"+data.msg+"</em></p>");
+			$(" .messagewindow").append("<img class='leftp'></img><img class='imgleft' src='"+data.photourl+"'></img><p class='me-chat'><strong>"+data.codename+":</strong> <em>"+data.msg+"</em></p>");
 		}
 		else{
-			$(" .messagewindow").append("<img class='rightp'></img><img class='imgright' src='"+data.profileUrl+"'></img><p class='you-chat'><strong>"+data.codename+":</strong> <em>"+data.msg+"</em></p>");
+			$(" .messagewindow").append("<img class='rightp'></img><img class='imgright' src='"+data.photourl+"'></img><p class='you-chat'><strong>"+data.codename+":</strong> <em>"+data.msg+"</em></p>");
 		}
 		$(".messagewindow").prop({scrollTop: $(".messagewindow").prop("scrollHeight")});
 	});
