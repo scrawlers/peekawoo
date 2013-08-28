@@ -8,6 +8,7 @@ var express = require('express.io')
   , path = require('path')
   , passport = require('passport')
   , FacebookStrategy = require('passport-facebook').Strategy
+  , TwitterStrategy = require('passport-twitter').Strategy
   , redis = require('redis')
   , RedisStore = require('connect-redis')(express)
   , cookieParser = require('connect').utils.parseSignedCookies
@@ -63,6 +64,12 @@ passport.use(new FacebookStrategy(config.fb,
   }
 ));
 
+passport.use(new TwitterStrategy(config.tw,
+  function(accessToken, refreshToken, profile, done) {
+	profile.photourl = profile.profile_image_url;
+    return done(null, profile);
+  }
+));
 
 app.get("/login",function(req,res){
 	res.render('login');
@@ -70,11 +77,21 @@ app.get("/login",function(req,res){
 app.get('/authfb',
   passport.authenticate('facebook'));
 
+app.get('/authtw',
+		  passport.authenticate('twitter'));
+
 app.get('/authfb/callback',
 		passport.authenticate('facebook', { failureRedirect: '/login' }),
 		function(req, res) {
 			res.redirect('/option');
 });
+
+app.get('/authtw/callback',
+		passport.authenticate('twitter', { failureRedirect: '/login' }),
+		function(req, res) {
+			res.redirect('/option');
+});
+
 app.get('/option',function(req,res){
 	res.render('option',{profile:req.session.passport.user.gender});
 });
