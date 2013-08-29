@@ -5,6 +5,35 @@ $(function(){
 	socket.emit('join',{room:room});
 	var user = $("#user").val();
 	user = JSON.parse(user);
+	var my_chatm8 = $("#chatm8").val();
+	my_chatm8 = JSON.parse(my_chatm8);
+	//alert(contval);
+	var contmechatm8 = {};
+	if(user.id == my_chatm8.male.id){
+		$(".current-photo").html("<img class='cpimg' src='"+my_chatm8.female.photourl+"'></img>");
+		contmechatm8 = {user: user,mate:my_chatm8.female};
+	}
+	else{
+		$(".current-photo").html("<img class='cpimg' src='"+my_chatm8.male.photourl+"'></img>");
+		contmechatm8 = {user: user,mate:my_chatm8.male};
+	}
+	
+	//socket.emit('files',contmechatm8);	
+	
+	$('.ratings_chick').click(
+		function(){
+			if($(this).is('.ratings_chick')){
+				socket.emit('uninsert',contmechatm8);
+			}
+			else{
+				socket.emit('insert',contmechatm8);
+			}
+		}
+	);
+	
+	//socket.on('reveal',function(){
+	//});
+	
 	socket.on(user.id,function(data){
 		if(data){
 			window.location = '/chat/'+data.name;
@@ -12,14 +41,11 @@ $(function(){
 		else{
 			window.location = '/error';
 		}
-
 	});
 	
 	socket.on('new msg',function(data){
 		console.log("++++++++data++++++");
 		console.log(data);
-		console.log("++++++++profileUrl++++++");
-		console.log(data.profileUrl);
 		if(data.gender == "male"){
 			$(" .messagewindow").append("<img class='leftp'></img><img class='imgleft' src='"+data.photourl+"'></img><p class='me-chat'><strong>"+data.codename+":</strong> <em>"+data.msg+"</em></p>");
 		}
@@ -59,5 +85,8 @@ $(function(){
 			$(this).val('');
 			return false;
 		}
+	});
+	socket.on('game_stop',function(){
+		window.location = '/loading';
 	});
 });

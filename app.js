@@ -101,14 +101,32 @@ app.get('/authtw/callback',
 app.get('/option',function(req,res){
 	res.render('option',{profile:req.session.passport.user.gender});
 });
-app.post('/loading',function(req,res){
-	req.user.gender = req.body["gender-m"] || req.body["gender-f"] || req.user._json.gender;
-	req.user.codename = req.body.codename;
-	console.log(req.body.codename);
+app.get('/loading',function(req,res){
+	req.user.gender = req.query["gender-m"] || req.query["gender-f"] || req.user._json.gender;
+	req.user.codename = req.query.codename || req.user.codename;
 	res.render('loading',{user: req.user});
 });
 
+app.get('/ranking',function(req,res){
+	var user = req.user;
+	client.smembers('visitor:'+user.id,function(err,data){
+		console.log("+++++Data Content+++++");
+		console.log(data);
+		var up = {};
+		up.id = user.id;
+		up.username = user.username;
+		up.gender = user.gender;
+		up.photourl = user.photourl;
+		up.provider = user.provider;
+		up.codename = user.codename;
+		console.log("+++++UP content+++++");
+		console.log(up);
+		res.render('ranking',{user:up,chatmate:data});
+	});
+});
+
 app.get('/chat/:room',function(req,res){
+	console.log("******req.params.room******");
 	console.log(req.params.room);
 	client.smembers(req.params.room,function(err,data){
 		console.log(err);
@@ -119,6 +137,8 @@ app.get('/chat/:room',function(req,res){
 		else{
 			data = JSON.parse(data[0]);
 		}
+		console.log(data);
+		console.log(req.user.photourl);
 		var up = {};
 		up.id = req.user.id;
 		up.username = req.user.username;
@@ -175,24 +195,51 @@ app.io.sockets.on('connection',function(socket){
 	console.log("===================");
 	var user = socket.handshake.peekawoo.user;
 	app.io.route('join',function(req){
+		console.log("++++checking req.data.room ++++");
+		console.log(req.data.room);
 		req.io.join(req.data.room);
 	});
+	
 	app.io.route('leave',function(req){
 		req.io.leave(req.data.room);
 	});
-
+	
+	app.io.route('insert',function(req){
+		console.log(req);
+		var user = req.data.user;
+		var mate = req.data.mate;
+		console.log("====user value====");
+		console.log(user);
+		console.log("====mate value====");
+		console.log(mate);
+		console.log("====remove if exist====");
+		client.srem("visitor:"+mate.id,JSON.stringify(user));
+		console.log("====add user to mate====");
+		client.sadd("visitor:"+mate.id,JSON.stringify(user));
+	});
+	
+	app.io.route('uninsert',function(req){
+		console.log(req);
+		var user = req.data.user;
+		var mate = req.data.mate;
+		console.log("====user value====");
+		console.log(user);
+		console.log("====mate value====");
+		console.log(mate);
+		console.log("====Delete me in my chatmate====");
+		//client.smembers(mate.id,function(callback){
+		//	console.log("====callback value====");
+		//	console.log(callback);
+		//});
+		client.srem("visitor:"+mate.id,JSON.stringify(user));
+		//client.sadd("visitor:"+mate.id,JSON.stringify(user));
+	});
+	
 	app.io.route('my msg',function(req){
-		
-	//	user.msg = req.data.msg;
-	//	console.log(JSON.stringify(user));
-		console.log("----my msg req.data content----");
-		console.log(req.data);
 		app.io.room(getRoom(req)).broadcast('new msg', req.data);
 	});
 
 	app.io.route('member', function(req) {
-		
-		
 		async.auto({
 			setMember : function(callback){
 				var user = JSON.parse(req.data);
@@ -200,14 +247,15 @@ app.io.sockets.on('connection',function(socket){
 				up.id = user.id;
 				up.username = user.username;
 				up.gender = user.gender;
-				up.profileUrl = user.profileUrl;
+				up.photourl = user.photourl;
 				up.provider = user.provider;
 				client.srem("visitor:"+user.gender,JSON.stringify(up));
 				client.sadd("visitor:"+user.gender,JSON.stringify(up));
-				console.log("+++++++cheking+++++++");
-				console.log(up);
-				console.log("+++++++cheking+++++++");
 				callback(null,true);
+				
+				console.log("+++++++checking+++++++");
+				console.log(up);
+				console.log("+++++++checking+++++++");
 			},
 			getMaleVisitor : function(callback){
 				client.smembers("visitor:male",callback);
@@ -216,12 +264,14 @@ app.io.sockets.on('connection',function(socket){
 				client.smembers("visitor:female",callback);
 			}
 		},function(err,result){
+			console.log(result);
 			if(result.getMaleVisitor.length >= 1 && result.getFemaleVisitor.length >= 1){
 				if(!game_lock){
 					game_lock = true;
+					console.log("starting game in 3 sec");
 					setTimeout(function(){
 						start_game();
-					},60000);
+					},30000);
 				}
 			}
 		});
@@ -229,8 +279,6 @@ app.io.sockets.on('connection',function(socket){
 		
 	});
 });
-
-
 
 start_chat = function(vf,vm,cycle){
 	console.log("@@@@@@@@@@@@@ Chat start");
@@ -252,9 +300,15 @@ start_chat = function(vf,vm,cycle){
 						male : vms,
 						female : vfs
 					};
+					console.log("++++++getting blank room++++++");
+					console.log(room);
+					console.log("++++++++++++++++++++++++++++++");
 					client.srem(room.name,JSON.stringify(room),function(){
 						client.sadd(room.name,JSON.stringify(room));
 						rooms.push(room);
+						console.log("++++Locating image++++");
+						console.log(room);
+						console.log("++++++++++++++++++++++");
 						app.io.broadcast(vfs.id, room);
 						app.io.broadcast(vms.id, room);
 					});
@@ -288,6 +342,7 @@ start_chat = function(vf,vm,cycle){
 			}
 			new_vm.push(vm[0]);
 			setTimeout(function(){
+				console.log("@@@@@CYCLE@@@@@");
 				console.log(cycle);
 				console.log(rooms.length);
 				cycle = cycle + 1;
@@ -299,7 +354,7 @@ start_chat = function(vf,vm,cycle){
 					app.io.broadcast('game_stop', true);
 				}
 				
-			},60000);
+			},30000);
 		},
 		
 	},function(err,result){
@@ -330,13 +385,22 @@ start_game = function(){
 function getRoom(req){
 	var rooms = req.io.manager.roomClients[req.io.socket.id];
 	var room = "";
-	console.log(rooms);
+	
 	for(var i in rooms){
 	if(i != '' && room == ""){
 	room = i.replace('/','');
 	}
 	}
+	console.log(room);
 	return room;
 	}
+
+client.keys('*', function(err, keys) {
+	if(keys){
+		keys.forEach(function(key){client.del(key);});
+	}
+    
+    console.log('Deletion of all redis reference ', err || "Done!");
+});
 
 app.listen(3000);

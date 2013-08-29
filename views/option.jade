@@ -6,7 +6,7 @@ block content
             .header
         .gender-container
             .choose-gender-box
-                form(method='post', action='/loading', id='option')
+                form(method='get', action='/loading', id='option')
                     if(profile=='male')
                         button#but-male.male.s(type='button', style='border: 5px solid rgb(102, 179, 207);')
                             input(type='radio', id='gender-m', name='gender-m', value='male', hidden='true', checked='true')

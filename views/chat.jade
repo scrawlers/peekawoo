@@ -33,6 +33,7 @@ block content
                 input#message(type='text', name='message')
                 button#reply(type='button',name='reply')
                 input(type='hidden',id='room', value=room.name)
+                input(type='hidden',id='chatm8', value=JSON.stringify(room))
                 input(type="hidden",id="user",value=JSON.stringify(user))
                 #r1.rate_widget
                     #rate.ratings_chick()
@@ -54,25 +55,16 @@ block content
             });
             $('#left-time').startCountDown();
         }
-        $('.ratings_chick').hover(
-                    function() {  
-                        $(this).prevAll().andSelf().addClass('ratings_over');  
-                        $(this).nextAll().removeClass('ratings_vote');   
-                    },
-                    function() {  
-                        $(this).prevAll().andSelf().removeClass('ratings_over');
-                    }  
-            );
-            $('.ratings_chick').click(
-                    function(){
-                        if($(this).is('.ratings_chick')){
-                            $(this).prevAll().andSelf().removeClass('ratings_chick');
-                            $(this).prevAll().andSelf().addClass('ratings_chick-sel');
-                        }
-                        else{
-                            $(this).prevAll().andSelf().removeClass('ratings_chick-sel');
-                            $(this).prevAll().andSelf().addClass('ratings_chick');
-                        }
-                    }
-            );
+        $('.ratings_chick').click(
+            function(){
+                if($(this).is('.ratings_chick')){
+                    $(this).prevAll().andSelf().removeClass('ratings_chick');
+                    $(this).prevAll().andSelf().addClass('ratings_chick-sel');
+                }
+                else{
+                    $(this).prevAll().andSelf().removeClass('ratings_chick-sel');
+                    $(this).prevAll().andSelf().addClass('ratings_chick');
+                }
+            }
+        );
         set_by_offset1(Number($("#min_11").html() + $("#min_12").html()),Number($("#sec_21").html() + $("#sec_22").html()));
