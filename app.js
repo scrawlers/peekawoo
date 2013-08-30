@@ -112,7 +112,6 @@ app.get('/ranking',function(req,res){
 	client.smembers('visitor:'+user.id,function(err,data){
 		console.log("+++++Data Content Query+++++");
 		console.log(data);
-		data = JSON.parse(data);
 		console.log("+++++Data Content After Parse+++++");
 		console.log(data);
 		var up = {};
@@ -272,7 +271,7 @@ app.io.sockets.on('connection',function(socket){
 					console.log("starting game in 3 sec");
 					setTimeout(function(){
 						start_game();
-					},30000);
+					},60000);
 				}
 			}
 		});
@@ -304,15 +303,17 @@ start_chat = function(vf,vm,cycle){
 					console.log("++++++getting blank room++++++");
 					console.log(room);
 					console.log("++++++++++++++++++++++++++++++");
-					client.srem(room.name,JSON.stringify(room),function(){
-						client.sadd(room.name,JSON.stringify(room));
-						rooms.push(room);
-						console.log("++++Locating image++++");
-						console.log(room);
-						console.log("++++++++++++++++++++++");
-						app.io.broadcast(vfs.id, room);
-						app.io.broadcast(vms.id, room);
-					});
+					//client.srem(room.name,JSON.stringify(room),function(){
+						
+					//});
+					client.srem(room.name,JSON.stringify(room));
+					client.sadd(room.name,JSON.stringify(room));
+					rooms.push(room);
+					console.log("++++Locating image++++");
+					console.log(room);
+					console.log("++++++++++++++++++++++");
+					app.io.broadcast(vfs.id, room);
+					app.io.broadcast(vms.id, room);
 					
 					
 				}
@@ -355,7 +356,7 @@ start_chat = function(vf,vm,cycle){
 					app.io.broadcast('game_stop', true);
 				}
 				
-			},30000);
+			},60000);
 		},
 		
 	},function(err,result){
