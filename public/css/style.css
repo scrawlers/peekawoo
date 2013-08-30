@@ -6428,12 +6428,11 @@ footer a, footer p {
 .ranking-container .ranking-selection-box .ranking-selection-list .ranking-left{  
     border: 0 solid #000000;
     display: block;
-    float: left;
     height: auto;
     left: 40px;
     position: relative;
     top: 2px;
-    width: 35%;
+    width: 79%;
 }
 
 .ranking-container .ranking-selection-box .ranking-selection-list .ranking-right{  
@@ -6453,7 +6452,7 @@ footer a, footer p {
     float: left;
     font-family: helvetica;
     font-size: 20px;
-    margin: 3% 10px;
+    margin: 5% 22px;
     vertical-align: middle;
     width: 70px;
 }
@@ -6926,4 +6925,31 @@ body.loading-page {
     display: block;
     height: 71px;
     margin-top: 517px;
+}
+
+#fblinkicon {
+	background-image: url("/img/hc-theme/linkfb.png");
+	background-position: center center;
+    background-repeat: no-repeat;
+    background-size: auto auto;
+    border: 1px solid blue;
+    display: block;
+    float: right;
+    height: 50px;
+    margin-top: 5px;
+    width: 50px;
+	
+}
+
+#twlinkicon {
+    background-image: url("/img/hc-theme/linktw.png");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: auto auto;
+    border: 1px solid blue;
+    display: block;
+    float: right;
+    height: 50px;
+    margin-top: 5px;
+    width: 50px;
 }

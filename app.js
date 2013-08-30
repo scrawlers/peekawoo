@@ -110,7 +110,10 @@ app.get('/loading',function(req,res){
 app.get('/ranking',function(req,res){
 	var user = req.user;
 	client.smembers('visitor:'+user.id,function(err,data){
-		console.log("+++++Data Content+++++");
+		console.log("+++++Data Content Query+++++");
+		console.log(data);
+		data = JSON.parse(data);
+		console.log("+++++Data Content After Parse+++++");
 		console.log(data);
 		var up = {};
 		up.id = user.id;
@@ -205,7 +208,6 @@ app.io.sockets.on('connection',function(socket){
 	});
 	
 	app.io.route('insert',function(req){
-		console.log(req);
 		var user = req.data.user;
 		var mate = req.data.mate;
 		console.log("====user value====");
@@ -219,7 +221,6 @@ app.io.sockets.on('connection',function(socket){
 	});
 	
 	app.io.route('uninsert',function(req){
-		console.log(req);
 		var user = req.data.user;
 		var mate = req.data.mate;
 		console.log("====user value====");
