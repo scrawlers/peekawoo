@@ -1,14 +1,92 @@
 extends layout
 
 block content
-    body.home-page
-        .header-wrapper
-            .header
-        .homepage-container
-            .login-container
-                h1.login-head Sign In
-                p.login-paraa Meet local singles on the world's first online
-                p.login-parab speed dating site.
-                a.sb-facebook(href="/authfb")
-                p.fb-tw-or or
-                a.sb-twitter(href="/authtw")
+    body.container.index-bg
+        .head.peekawoo-logo
+            .container
+                .index-form
+                    .index-form-container
+                        br
+                        h1.text-signin Sign In
+                        p.text-signin2 Meet local singles on the world's first online speed dating site
+                      
+                        br
+                        button.facebooklogin
+                        a.sb-facebook(href="/authfb")
+                        p.text-signin2 or
+                        button.twitterlogin
+                            a.sb-twitter(href="/authtw")
+                        br
+
+                        script(type='text/javascript', src='//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-521f02660b064565')
+                        script(type='text/javascript')
+                            addthis.layers({
+                                'theme' : 'transparent',
+                                'follow' : {
+                                    'services' : [
+                                        {'service': 'facebook', 'id': 'peekawooapp'},
+                                        {'service': 'twitter', 'id': 'peekawooapp'},
+                                        {'service': 'instagram', 'id': 'peekawoo'}
+                                    ]
+                                }
+                            });
+                            
+                        script(type='text/javascript', src='//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-521f02660b064565')
+                        script(type='text/javascript')
+                            addthis.bar.initialize({'default':{
+                                "backgroundColor": "#000000",
+                                "buttonColor": "#098DF4",
+                                "textColor": "#FFFFFF",
+                                "buttonTextColor": "#FFFFFF"
+                            },rules:[
+                            {
+                                "name": "AnyOther",
+                                "message": "If you enjoy this page, do us a favor:",
+                                "action": {
+                                "type": "button",
+                                "text": "Share this page",
+                                "verb": "share",
+                                "service": "preferred"
+                            }
+                            },
+                            {
+                                "name": "Twitter",
+                                "match": {
+                                "referringService": "twitter"
+                            },
+                            "message": "BETA TEST. Be updated with our releases::",
+                            "action": {
+                                "type": "button",
+                                "text": "Subscribe now!",
+                                "verb": "share",
+                                "service": "twitter"
+                            }
+                            },
+                            {
+                            "name": "Facebook",
+                            "match": {
+                            "referringService": "facebook"
+                            },
+                            "message": "Tell your friends about us:",
+                            "action": {
+                                "type": "button",
+                                "text": "Share on Facebook",
+                                "verb": "share",
+                                "service": "facebook"
+                            }
+                            },
+                            {
+                                "name": "Google",
+                                "match": {
+                                "referrer": "google.com"
+                            },
+                            "message": "If you like this page, let Google know:",
+                            "action": {
+                                "type": "button",
+                                "text": "+1",
+                                "verb": "share",
+                                "service": "google_plusone_share"
+                            }
+                            }
+                            ]});
+    

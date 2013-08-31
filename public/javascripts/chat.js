@@ -43,6 +43,10 @@ $(function(){
 		}
 	});
 	
+	$(".signout").click(function(){
+		socket.emit('leave',{user: user,room:room});
+	});
+	
 	socket.on('new msg',function(data){
 		console.log("++++++++data++++++");
 		console.log(data);

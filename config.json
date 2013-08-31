@@ -2,11 +2,11 @@
 "fb" : {
 	"clientID": "509205152492505",
     "clientSecret": "f1aa93e7264d3d6e97416b0c2e44faad",
-    "callbackURL": "http://192.168.43.3:3000/authfb/callback"
+    "callbackURL": "http://192.168.43.2:3000/authfb/callback"
  },
  "tw" : {
 		"consumerKey": "uSBZ86eTy3sSJ3M49seaA",
 	    "consumerSecret": "l5WXaz5IZ0ZmvGnTcEbJw6Zp0OIRQhkNW96uhTt0m0",
-	    "callbackURL": "http://192.168.43.3:3000/authtw/callback"
+	    "callbackURL": "http://192.168.1.101:3000/authtw/callback"
  }
 }

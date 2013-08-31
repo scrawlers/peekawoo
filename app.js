@@ -203,7 +203,12 @@ app.io.sockets.on('connection',function(socket){
 	});
 	
 	app.io.route('leave',function(req){
-		req.io.leave(req.data.room);
+		console.log("++++signout req.data++++");
+		console.log(req.room);
+		console.log("++++signout user++++");
+		console.log(req.user);
+		//client.srem(user);
+		//req.io.leave(req.data.room);
 	});
 	
 	app.io.route('insert',function(req){
