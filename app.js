@@ -68,13 +68,15 @@ passport.use(new FacebookStrategy(config.fb,
 
 passport.use(new TwitterStrategy(config.tw,
   function(accessToken, refreshToken, profile, done) {
-	profile.photourl = profile.profile_image_url;
+	profile.photourl = 'http://graph.facebook.com/'+profile.username+'/picture';
+	console.log("+++facebook profileurl+++");
+	console.log(profile.photourl);
     return done(null, profile);
   }
 ));
 
 app.get("/",function(req,res){
-	res.render('login');
+	res.render('subscribe');
 });
 
 app.get("/login",function(req,res){
@@ -98,8 +100,16 @@ app.get('/authtw/callback',
 			res.redirect('/option');
 });
 
+app.get('/subscribe2',function(req,res){
+	console.log("+++++SUBSCRIBE+++++");
+	console.log(req.user);
+	console.log(req.query);
+	client.sadd("email",req.query.inputBox);
+	res.render('subscribe2');
+});
+
 app.get('/option',function(req,res){
-	res.render('option',{profile:req.session.passport.user.gender});
+	res.render('option',{profile:req.session.passport.user.gender,provider:req.session.passport.user.provider});
 });
 app.get('/loading',function(req,res){
 	req.user.gender = req.query["gender-m"] || req.query["gender-f"] || req.user._json.gender;
@@ -142,9 +152,19 @@ app.get('/chat/:room',function(req,res){
 		console.log(data);
 		console.log(req.user.photourl);
 		var up = {};
+		if(req.user.provider=='twitter'){
+			gender = req.user.gender
+			console.log("****GENDER IF Twitter USE****");
+			console.log(gender);
+			console.log("data."+gender+".gender");
+			//up.gender = "data."+gender+".gender"
+		}
+		else{
+			
+			up.gender = req.user.gender;
+		}
 		up.id = req.user.id;
 		up.username = req.user.username;
-		up.gender = req.user.gender;
 		up.photourl = req.user.photourl;
 		up.provider = req.user.provider;
 		up.codename = req.user.codename;
@@ -203,12 +223,22 @@ app.io.sockets.on('connection',function(socket){
 	});
 	
 	app.io.route('leave',function(req){
-		console.log("++++signout req.data++++");
-		console.log(req.room);
-		console.log("++++signout user++++");
-		console.log(req.user);
-		//client.srem(user);
-		//req.io.leave(req.data.room);
+		console.log("++++signout req.data.room++++");
+		console.log(req.data.room);
+		console.log("++++signout req.data.user++++");
+		console.log(req.data.user);
+		console.log("+++++removing gender and room declare+++++");
+		var removegender = req.data.user;
+		var removeroom = req.data.room;
+		console.log(removegender);
+		console.log(removeroom);
+		console.log("+++++removing gender+++++");
+		delete removegender.codename;
+		console.log(removegender);
+		client.srem("visitor:"+removegender.gender,JSON.stringify(removegender));
+		//client.srem(removeroom.name,JSON.stringify(removeroom));
+		client.del(removeroom.name);
+		console.log("@@@@@ D O N E  R E M O V I N G @@@@@");
 	});
 	
 	app.io.route('insert',function(req){
